@@ -7,14 +7,14 @@ class BoxContent extends StatefulWidget {
   final String imageUrl;
   final String title;
   final String subtitle;
-  final double imageSize;
+  final double? imageSize;
 
   const BoxContent({
     Key? key,
     required this.imageUrl,
     required this.title,
     required this.subtitle,
-    this.imageSize = 64.0,
+    this.imageSize,
   }) : super(key: key);
 
   @override
@@ -24,28 +24,16 @@ class BoxContent extends StatefulWidget {
 class _BoxContentState extends State<BoxContent> {
   @override
   Widget build(BuildContext context) {
-    final double outerSize = widget.imageSize;
-
     return Container(
       padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        // borderRadius: BorderRadius.circular(12.0),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.black.withOpacity(0.05),
-        //     blurRadius: 6,
-        //     offset: const Offset(0, 3),
-        //   ),
-        // ],
-      ),
+      width: double.infinity, // Make container take full width
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Gradient circular image with a small inner padding
           Container(
-            width: outerSize,
-            height: outerSize,
+            width: widget.imageSize ?? double.infinity,
+            height: widget.imageSize ?? double.infinity,
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               // gradient: const LinearGradient(
@@ -62,16 +50,61 @@ class _BoxContentState extends State<BoxContent> {
               ],
             ),
             child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(20.0),
+              ),
               child: Image.network(
                 widget.imageUrl,
-                width: outerSize - 6,
-                height: outerSize - 6,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  color: Colors.grey.shade200,
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.person, color: Colors.grey),
-                ),
+                width: widget.imageSize ?? double.infinity,
+                height: widget.imageSize ?? double.infinity,
+                fit: BoxFit.fill,
+                loadingBuilder: (context, child, loadingProgress) {
+                  // Debug: Log image loading state
+                  print('Loading image from URL: ${widget.imageUrl}');
+                  if (loadingProgress == null) {
+                    print('Image loaded successfully');
+                    return child;
+                  } else {
+                    print(
+                      'Image loading progress: ${(loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) * 100).toStringAsFixed(1)}%',
+                    );
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                            : null,
+                        strokeWidth: 2,
+                      ),
+                    );
+                  }
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  // Debug: Log image loading error
+                  print('Error loading image from URL: ${widget.imageUrl}');
+                  print('Error details: $error');
+                  return Container(
+                    color: Colors.grey.shade200,
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.person, color: Colors.grey, size: 40),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Image failed to load',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ),
