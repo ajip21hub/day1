@@ -57,6 +57,33 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  // Dynamic data for BoxContent widgets
+  final List<Map<String, String>> boxData = [
+    {
+      'imageUrl':
+          'https://play-lh.googleusercontent.com/wnBLkioNZetwPWZxO5-rlS05dRZpc6Vs7vQS1uGJhW5XCiBuxfqlxEp5Zv8D4nZW1bc',
+      'title': 'Alex',
+      'subtitle': 'Software Engineer',
+    },
+    {
+      'imageUrl': 'https://flutter.dev/images/flutter-logo-sharing.png',
+      'title': 'Ben',
+      'subtitle': 'Product Designer',
+    },
+    {
+      'imageUrl':
+          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80',
+      'title': 'Cara',
+      'subtitle': 'Mobile Developer',
+    },
+    {
+      'imageUrl':
+          'https://images.unsplash.com/photo-1545996124-1b7a5b6f0f40?w=400&q=80',
+      'title': 'Dana',
+      'subtitle': 'QA Engineer',
+    },
+  ];
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -105,25 +132,13 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
         children: <Widget>[
-          const Text('You have pushed the button this mes:'),
-          const SizedBox(height: 6.0),
-          Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: 8.0),
-
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  _decrementCounter();
-                },
-                child: const Text('Decrement'),
-              ),
-            ],
-          ),
-
+          // const Text('You have pushed the button this mes:'),
+          // const SizedBox(height: 6.0),
+          // Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
+          // const SizedBox(height: 8.0),
           const SizedBox(height: 12.0),
 
-          // 4 grid items (2x2)
+          // Dynamic grid items based on boxData list
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -131,38 +146,15 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisSpacing: 2.0,
             crossAxisSpacing: 2.0,
             childAspectRatio: 3 / 4,
-            children: const [
-              BoxContent(
-                imageUrl:
-                    'https://play-lh.googleusercontent.com/wnBLkioNZetwPWZxO5-rlS05dRZpc6Vs7vQS1uGJhW5XCiBuxfqlxEp5Zv8D4nZW1bc',
-                title: 'Alex',
-                subtitle: 'Software Engineer',
+            children: boxData.map((data) {
+              return BoxContent(
+                imageUrl: data['imageUrl']!,
+                title: data['title']!,
+                subtitle: data['subtitle']!,
                 imageSize: 200,
-                // imageSize: double.infinity,
-              ),
-              BoxContent(
-                imageUrl: 'https://flutter.dev/images/flutter-logo-sharing.png',
-                title: 'Ben',
-                subtitle: 'Product Designer',
-                imageSize: 200,
-              ),
-              BoxContent(
-                imageUrl:
-                    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80',
-                title: 'Cara',
-                subtitle: 'Mobile Developer',
-                imageSize: 200,
-              ),
-              BoxContent(
-                imageUrl:
-                    'https://images.unsplash.com/photo-1545996124-1b7a5b6f0f40?w=400&q=80',
-                title: 'Dana',
-                subtitle: 'QA Engineer',
-                imageSize: 200,
-              ),
-            ],
+              );
+            }).toList(),
           ),
-
           const SizedBox(height: 12.0),
         ],
       ),
