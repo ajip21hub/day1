@@ -14,7 +14,7 @@ class BoxContent extends StatefulWidget {
     required this.imageUrl,
     required this.title,
     required this.subtitle,
-    this.imageSize,
+    this.imageSize = 200.0,
   }) : super(key: key);
 
   @override

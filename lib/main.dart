@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'BoxContent.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'home_screen.dart';
+import 'profile_screen.dart';
+import 'messages_screen.dart';
+import 'settings_screen.dart';
+import 'instagram_feed_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,114 +60,43 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _currentIndex = 0;
 
-  // Dynamic data for BoxContent widgets
-  final List<Map<String, String>> boxData = [
-    {
-      'imageUrl':
-          'https://play-lh.googleusercontent.com/wnBLkioNZetwPWZxO5-rlS05dRZpc6Vs7vQS1uGJhW5XCiBuxfqlxEp5Zv8D4nZW1bc',
-      'title': 'Alex',
-      'subtitle': 'Software Engineer',
-    },
-    {
-      'imageUrl': 'https://flutter.dev/images/flutter-logo-sharing.png',
-      'title': 'Ben',
-      'subtitle': 'Product Designer',
-    },
-    {
-      'imageUrl':
-          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80',
-      'title': 'Cara',
-      'subtitle': 'Mobile Developer',
-    },
-    {
-      'imageUrl':
-          'https://images.unsplash.com/photo-1545996124-1b7a5b6f0f40?w=400&q=80',
-      'title': 'Dana',
-      'subtitle': 'QA Engineer',
-    },
+  // List of screens for navigation
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const InstagramFeedScreen(),
+    const MessagesScreen(),
+    const ProfileScreen(),
+    const SettingsScreen(),
   ];
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  // separate decrement method
-  void _decrementCounter() {
-    setState(() {
-      _counter--;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-
-        actions: [
-          IconButton(
-            icon: Icon(Icons.info),
-            onPressed: () {
-              // Action for info button
-            },
-          ),
+      bottomNavigationBar: CurvedNavigationBar(
+        index: _currentIndex,
+        height: 60.0,
+        items: const [
+          Icon(Icons.home, size: 30),
+          Icon(Icons.grid_view, size: 30),
+          Icon(Icons.message, size: 30),
+          Icon(Icons.person, size: 30),
+          Icon(Icons.settings, size: 30),
         ],
+        color: Colors.white,
+        buttonBackgroundColor: Colors.blue,
+        backgroundColor: Colors.blue.shade50,
+        animationCurve: Curves.easeInOut,
+        animationDuration: const Duration(milliseconds: 300),
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        letIndexChange: (index) => true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-        children: <Widget>[
-          // const Text('You have pushed the button this mes:'),
-          // const SizedBox(height: 6.0),
-          // Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
-          // const SizedBox(height: 8.0),
-          const SizedBox(height: 12.0),
-
-          // Dynamic grid items based on boxData list
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            mainAxisSpacing: 2.0,
-            crossAxisSpacing: 2.0,
-            childAspectRatio: 3 / 4,
-            children: boxData.map((data) {
-              return BoxContent(
-                imageUrl: data['imageUrl']!,
-                title: data['title']!,
-                subtitle: data['subtitle']!,
-                imageSize: 200,
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 12.0),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: _screens[_currentIndex],
     );
   }
 }
